@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "collections_practice"
+name = "chap_08_exercises"
 version = "0.1.0"

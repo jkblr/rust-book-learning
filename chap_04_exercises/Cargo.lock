@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "ownership_learning"
+name = "chap_04_exercises"
 version = "0.1.0"
