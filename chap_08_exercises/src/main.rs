@@ -69,33 +69,63 @@ fn add_person_to_department(
     extend_and_sort_vector(current_department_vector, person);
 }
 
-fn validate_string_format(s: &str) -> Vec<String> {
-    let mut counter = 0;
-    let mut res = Vec::new();
+enum Inputs {
+    ListDepartment(&'static String),
+    ListAll,
+    InputNameDepartment(&'static String, &'static String),
+    InvalidInput,
+}
+
+fn validate_string_format(s: &str) -> Inputs {
+    let mut res_vec = Vec::new();
     for word in s.split_whitespace() {
-        if counter == 0 || counter == 2 {
-            res.push(String::from(word));
-        }
-        counter += 1;
+        res_vec.push(String::from(word));
     }
-    res
+    if res_vec.len() == 4 && { &res_vec[0] == "Add" && &res_vec[3] == "to" } {
+        return Inputs::InputNameDepartment(&res_vec[1], &res_vec[3]);
+    } else if res_vec.len() == 3 && { &res_vec[0] == "List" && &res_vec[1] == "Department" } {
+        return Inputs::ListDepartment(&res_vec[2]);
+    } else if res_vec.len() == 2 && { &res_vec[0] == "List" && &res_vec[1] == "All" } {
+        return Inputs::ListAll;
+    } else {
+        return Inputs::InvalidInput;
+    }
 }
 
 fn io() {
     let mut map = HashMap::new();
-    let mut get_list = true;
-    while get_list {
-        println!("Please input a sentence of the form 'Add Sally to Engineering':");
+    loop {
+        println!("Please input a sentence of the form 'Add Sally to Engineering' to input data, or list all employees with 'List All' or list a specific department's employees with 'List Department <Department Name>'");
 
         let mut a = String::new();
         io::stdin().read_line(&mut a).expect("Failed to read line!");
         let trimmed_input = a.trim();
-        if &trimmed_input == &"List" {
-            get_list = false;
-        //TODO: Add Printing here
-        } else {
-            let inputs = validate_string_format(trimmed_input);
-            add_person_to_department(inputs[0].clone(), inputs[1].clone(), &mut map);
+        let case = validate_string_format(trimmed_input);
+        match case {
+            Inputs::ListAll => {
+                for (key, value) in &map {
+                    println!("These are the employees in department {}", key);
+                    for name in value {
+                        println!("{}", name);
+                    }
+                }
+
+                //TODO: Add Printing here
+            }
+            Inputs::InputNameDepartment(name, department) => {
+                add_person_to_department(*name, *department, &mut map);
+            }
+            Inputs::ListDepartment(department) => {
+                for (key, value) in &map {
+                    if key == &department {
+                        println!("These are the employees in department {}", key);
+                        for name in value {
+                            println!("{}", name);
+                        }
+                    }
+                }
+            }
+            Inputs::InvalidInput => continue,
         }
     }
 }
