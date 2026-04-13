@@ -70,25 +70,22 @@ fn add_person_to_department(
 }
 
 enum Inputs {
-    ListDepartment(&'static String),
+    ListDepartment(String),
     ListAll,
-    InputNameDepartment(&'static String, &'static String),
+    InputNameDepartment(String, String),
     InvalidInput,
 }
 
 fn validate_string_format(s: &str) -> Inputs {
-    let mut res_vec = Vec::new();
-    for word in s.split_whitespace() {
-        res_vec.push(String::from(word));
-    }
-    if res_vec.len() == 4 && { &res_vec[0] == "Add" && &res_vec[3] == "to" } {
-        return Inputs::InputNameDepartment(&res_vec[1], &res_vec[3]);
-    } else if res_vec.len() == 3 && { &res_vec[0] == "List" && &res_vec[1] == "Department" } {
-        return Inputs::ListDepartment(&res_vec[2]);
-    } else if res_vec.len() == 2 && { &res_vec[0] == "List" && &res_vec[1] == "All" } {
-        return Inputs::ListAll;
+    let res_vec: Vec<&str> = s.split_whitespace().collect();
+    if res_vec.len() == 4 && { res_vec[0] == "Add" && res_vec[2] == "to" } {
+        Inputs::InputNameDepartment(String::from(res_vec[1]), String::from(res_vec[3]))
+    } else if res_vec.len() == 3 && { res_vec[0] == "List" && res_vec[1] == "Department" } {
+        Inputs::ListDepartment(String::from(res_vec[2]))
+    } else if res_vec.len() == 2 && { res_vec[0] == "List" && res_vec[1] == "All" } {
+        Inputs::ListAll
     } else {
-        return Inputs::InvalidInput;
+        Inputs::InvalidInput
     }
 }
 
@@ -109,11 +106,9 @@ fn io() {
                         println!("{}", name);
                     }
                 }
-
-                //TODO: Add Printing here
             }
             Inputs::InputNameDepartment(name, department) => {
-                add_person_to_department(*name, *department, &mut map);
+                add_person_to_department(name, department, &mut map);
             }
             Inputs::ListDepartment(department) => {
                 for (key, value) in &map {
