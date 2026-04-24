@@ -1,3 +1,14 @@
+struct Point<T> {
+    x: T,
+    y: T,
+}
+
+impl<T> Point<T> {
+    fn x(&self) -> &T {
+        &self.x
+    }
+}
+
 fn largest<T: std::cmp::PartialOrd>(list: &[T]) -> &T {
     let mut largest = &list[0];
 
@@ -20,4 +31,9 @@ fn main() {
 
     let result = largest(&char_list);
     println!("The largest char is {result}");
+
+    // Methods
+    let p = Point { x: 5, y: 10 };
+
+    println!("p.x = {}", p.x());
 }
